@@ -52,8 +52,8 @@ logger.info(f"Data preprocessing completed.")
 
 # Split the data
 X_train, X_test = data_processor.split_data()
-logger.info("Training set shape: %s", X_train.shape)
-logger.info("Test set shape: %s", X_test.shape)
+logger.info(f"Training set shape: {X_train.shape}")
+logger.info(f"Test set shape: {X_test.shape}")
 
 # COMMAND ----------
 # Save to catalog
