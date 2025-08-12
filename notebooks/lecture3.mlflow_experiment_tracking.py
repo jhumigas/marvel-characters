@@ -24,7 +24,7 @@ if not is_databricks():
 mlflow.get_tracking_uri()
 # COMMAND ----------
 experiment = mlflow.set_experiment(experiment_name="/Shared/marvel-demo")
-mlflow.set_experiment_tags({"repository_name": "marvelousmlops/marvel-characters"})
+mlflow.set_experiment_tags({"repository_name": "jhumigas/marvel-characters"})
 
 print(experiment)
 # COMMAND ----------
@@ -39,7 +39,7 @@ mlflow.get_experiment(experiment.experiment_id)
 # COMMAND ----------
 # search for experiment
 experiments = mlflow.search_experiments(
-    filter_string="tags.repository_name='marvelousmlops/marvel-characters'"
+    filter_string="tags.repository_name='jhumigas/marvel-characters'"
 )
 print(experiments)
 
@@ -57,9 +57,12 @@ print(mlflow.active_run() is None)
 
 # COMMAND ----------
 # start a run
+import git
+repo = git.Repo(search_parent_directories=True)
+sha = repo.head.object.hexsha
 with mlflow.start_run(
     run_name="marvel-demo-run",
-    tags={"git_sha": "1234567890abcd"},
+    tags={"git_sha": sha},
     description="marvel character prediction demo run",
 ) as run:
     run_id = run.info.run_id
@@ -86,7 +89,7 @@ print(run_info["data"]["params"])
 
 run_id = mlflow.search_runs(
     experiment_names=["/Shared/marvel-demo"],
-    filter_string="tags.git_sha='1234567890abcd'",
+    filter_string=f"tags.git_sha='{sha}'",
 ).run_id[0]
 run_info = mlflow.get_run(run_id=f"{run_id}").to_dictionary()
 print(run_info)
@@ -104,7 +107,7 @@ mlflow.end_run()
 # COMMAND ----------
 # start another run and log other things
 mlflow.start_run(run_name="marvel-demo-run-extra",
-                 tags={"git_sha": "1234567890abcd"},
+                 tags={"git_sha": sha},
                        description="marvel demo run with extra artifacts",)
 mlflow.log_metric(key="metric3", value=3.0)
 # dynamically log metric (trainings epochs)
