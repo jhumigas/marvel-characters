@@ -55,7 +55,7 @@ basic_model.prepare_features()
 basic_model.train()
 logger.info("Marvel model training completed.")
 
-# Train the Marvel model
+# Log the Marvel model
 basic_model.log_model()
 
 # Evaluate Marvel model
