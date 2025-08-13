@@ -8,6 +8,7 @@ from pyspark.sql import SparkSession
 
 from marvel_characters.config import ProjectConfig, Tags
 from marvel_characters.models.basic_model import BasicModel
+import git
 import os
 
 
@@ -25,10 +26,10 @@ if not is_databricks():
     mlflow.set_tracking_uri(f"databricks://{profile}")
     mlflow.set_registry_uri(f"databricks-uc://{profile}")
 
-
+sha = git.Repo(search_parent_directories=True).head.object.hexsha
 config = ProjectConfig.from_yaml(config_path="../project_config_marvel.yml", env="dev")
 spark = SparkSession.builder.getOrCreate()
-tags = Tags(**{"git_sha": "abcd12345", "branch": "main"})
+tags = Tags(**{"git_sha": sha, "branch": "main"})
 
 # COMMAND ----------
 # Initialize model with the config path
@@ -62,7 +63,7 @@ logged_model.metrics
 
 # COMMAND ----------
 run_id = mlflow.search_runs(
-    experiment_names=["/Shared/marvel-characters-basic"], filter_string="tags.git_sha='abcd12345'"
+    experiment_names=["/Shared/marvel-characters-basic"], filter_string=f"tags.git_sha='{sha}'"
 ).run_id[0]
 
 model = mlflow.sklearn.load_model(f"runs:/{run_id}/lightgbm-pipeline-model")
@@ -72,11 +73,11 @@ run = mlflow.get_run(basic_model.run_id)
 
 # COMMAND ----------
 inputs = run.inputs.dataset_inputs
-training_input = next((x for x in inputs if x.tags[0].value == 'training'), None)
+training_input = next((x for x in inputs if x.tags and x.tags[0].value == 'training'), None)
 training_source = mlflow.data.get_source(training_input)
 training_source.load()
 # COMMAND ----------
-testing_input = next((x for x in inputs if x.tags[0].value == 'testing'), None)
+testing_input = next((x for x in inputs if x.tags and x.tags[0].value == 'testing'), None)
 testing_source = mlflow.data.get_source(testing_input)
 testing_source.load()
 
@@ -92,4 +93,4 @@ print(v[0].__dict__)
 # COMMAND ----------
 # not supported
 v = mlflow.search_model_versions(
-    filter_string="tags.git_sha='abcd12345'")
+    filter_string=f"tags.git_sha='{sha}'")

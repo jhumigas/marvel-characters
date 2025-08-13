@@ -98,3 +98,8 @@ mlruns/
 # Environment variables
 .env
 logs*
+
+# Folders
+data/*
+downloaded_artifacts
+demo_artifacts
