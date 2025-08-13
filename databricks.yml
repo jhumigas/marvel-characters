@@ -29,7 +29,7 @@ targets:
     workspace:
       host: https://dbc-871fdd34-c2fe.cloud.databricks.com
       root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.target}/${bundle.name}
-      profile: dbc-871fdd34-c2fe
+      profile: marvelous
     variables:
       schedule_pause_status: PAUSED
 
@@ -39,7 +39,7 @@ targets:
     workspace:
       host: https://dbc-fdc56a8c-918a.cloud.databricks.com
       root_path: /Shared/.bundle/${bundle.target}/${bundle.name}
-      profile: dbc-871fdd34-c2fe
+      profile: marvelous
     variables:
       schedule_pause_status: PAUSED
 
@@ -48,6 +48,6 @@ targets:
     workspace:
       host: https://dbc-fdc56a8c-918a.cloud.databricks.com
       root_path: /Shared/.bundle/${bundle.target}/${bundle.name}
-      profile: dbc-871fdd34-c2fe
+      profile: marvelous
     variables:
       schedule_pause_status: PAUSED # normally UNPAUSED
